@@ -1,3 +1,5 @@
+using Auth.Core.Interfaces.DomainServices;
+using Auth.Core.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Auth.Web.Controllers;
@@ -6,15 +8,24 @@ namespace Auth.Web.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    [HttpPost("login")]
-    public IActionResult Login()
-    {
-        return Ok();
-    }
+    private readonly IAuthService _authService;
 
-    [HttpPost("register")]
-    public IActionResult Register()
+    public AuthController(IAuthService authService)
     {
-        return Ok();
+        _authService = authService;
+    }
+    
+    [HttpPost("login")]
+    public async Task<IActionResult> LoginAsync(LoginDto dto)
+    {
+        try
+        {
+            var token = await _authService.LoginAsync(dto);
+            return Ok(token);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 }
