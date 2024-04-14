@@ -3,6 +3,8 @@ using Auth.Core.Interfaces.DomainServices;
 using Auth.Core.Interfaces.Repositories;
 using Auth.Core.Models.Dtos;
 using Auth.Core.Services;
+using Auth.Core.Specifications;
+using Auth.Test.Helpers;
 using Moq;
 
 namespace Auth.Test.Tests.UnitTests;
@@ -18,13 +20,21 @@ public class AuthUnitTests
     }
     
     [Fact]
-    public void LoginAsync_WhenCalled_ReturnsString()
+    public async Task LoginAsync_WhenCalled_ReturnsString()
     {
         // Arrange
-        var dto = new LoginDto();
+        var user = AuthTestHelper.GetTestUser();
+        var userDto = new LoginDto
+        {
+            Email = user.Email,
+            Password = "testpassword"
+        };
+        
+        _userRepositoryMock.Setup(x => x.FirstOrDefaultAsync(It.IsAny<GetUserByEmailWithRoleSpec>(), new CancellationToken()))
+            .ReturnsAsync(user);
         
         // Act
-        var result = _authService.LoginAsync(dto);
+        var result = await _authService.LoginAsync(userDto);
         
         // Assert
         Assert.NotNull(result);
