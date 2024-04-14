@@ -34,9 +34,28 @@ public class AuthService : IAuthService
         return token;
     }
 
-    public Task<User> RegisterAsync(RegisterDto dto)
+    public async Task<User> RegisterAsync(RegisterDto dto)
     {
-        throw new NotImplementedException();
+        //Validate that email is not already in use
+        var users = await _userRepository.ListAsync();
+
+        if (users.Any(x => x.Email == dto.Email))
+            throw new RegisterException("Email already exists");
+
+        //Map dto to user and hash password
+        var user = new User
+        {
+            Email = dto.Email,
+            Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+            RoleId = 2 //KemiDbUser
+        };
+
+        //Add user to database
+        await _userRepository.AddAsync(user);
+        await _userRepository.SaveChangesAsync();
+        
+        //Return userDto
+        return user;
     }
 
     private string CreateToken(User user)

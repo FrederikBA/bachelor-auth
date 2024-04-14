@@ -69,16 +69,7 @@ public class AuthUnitTests
             Password = "password"
         };
         
-        //Setup the mock
-        var user = new User
-        {
-            Id = 1,
-            Email = dto.Email,
-            Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-            RoleId = 1 //Customer
-        };
-        
-        //Assure that the repository returns an empty list rather than null
+        //Mock users to ensure that the repository returns an empty list rather than null
         _userRepositoryMock.Setup(x => x.ListAsync(new CancellationToken()))
             .ReturnsAsync(new List<User>());
         
@@ -86,8 +77,26 @@ public class AuthUnitTests
         var result = await _authService.RegisterAsync(dto);
         
         //Assert
-        Assert.Equal(1, result.RoleId); //Is customer role
+        Assert.Equal(2, result.RoleId); //Is KemiDbUser role
         Assert.Equal(dto.Email, result.Email); //Email is correct
+    }
+
+    [Fact]
+    public async Task RegisterAsync_WhenCalled_ThrowsRegisterException()
+    {
+        //Arrange
+        var dto = new RegisterDto
+        {
+            Email = "test@example.com",
+            Password = "password"
+        };
+        
+        //Mock users to ensure that the repository returns a list with a user with the same email as dto
+        _userRepositoryMock.Setup(x => x.ListAsync(new CancellationToken()))
+            .ReturnsAsync(new List<User> { new User { Email = dto.Email } });
+        
+        //Act + Assert
+        await Assert.ThrowsAsync<RegisterException>(() => _authService.RegisterAsync(dto));
     }
 
 }
