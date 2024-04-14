@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Auth.Core.Entities;
+using Auth.Core.Exceptions;
 using Auth.Core.Interfaces.DomainServices;
 using Auth.Core.Interfaces.Repositories;
 using Auth.Core.Models.Dtos;
@@ -26,7 +27,7 @@ public class AuthService : IAuthService
 
         // validate
         if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
-            throw new Exception("Username or password is incorrect");
+            throw new LoginException("Username or password is incorrect");
 
         var token = CreateToken(user);
 
