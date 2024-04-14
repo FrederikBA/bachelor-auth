@@ -8,7 +8,7 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AuthContex
     public AuthContext CreateDbContext(string[] args)
     {
         //TODO: Move connection string to appsettings.json / configuration file
-        const string connectionString = "Server=localhost;Database=ShwUsers;User Id=sa;Password=thisIsSuperStrong1234;TrustServerCertificate=True";
+        const string connectionString = "Server=mssql;Database=ShwUsers;User Id=sa;Password=thisIsSuperStrong1234;TrustServerCertificate=True";
         
         var optionsBuilder = new DbContextOptionsBuilder<AuthContext>();
         optionsBuilder.UseSqlServer(connectionString);
