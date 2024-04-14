@@ -3,6 +3,8 @@ using Auth.Core.Interfaces.DomainServices;
 using Auth.Core.Interfaces.Repositories;
 using Auth.Core.Services;
 using Auth.Infrastructure.Data;
+using Auth.Web.Interfaces;
+using Auth.Web.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -43,7 +45,8 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 //Build services
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// builder.Services.AddScoped<IProductViewModelService, ProductViewModelService>();
+//Build view model services
+builder.Services.AddScoped<IViewModelService, ViewModelService>();
 
 //JWT Key
 var key = Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!);

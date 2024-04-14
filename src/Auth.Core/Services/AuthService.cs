@@ -47,7 +47,7 @@ public class AuthService : IAuthService
         {
             Email = dto.Email,
             Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-            RoleId = 2 //KemiDbUser
+            RoleId = 2, //KemiDbUser
         };
 
         //Add user to database
@@ -63,9 +63,9 @@ public class AuthService : IAuthService
         // Create claims
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role.RoleType.ToString())
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Email, user.Email),
+            new(ClaimTypes.Role, user.Role.RoleType.ToString())
         };
 
         // Generate a secure key
