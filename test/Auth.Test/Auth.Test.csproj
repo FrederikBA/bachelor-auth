@@ -27,4 +27,8 @@
       <Folder Include="Helpers\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Auth.Core\Auth.Core.csproj" />
+    </ItemGroup>
+
 </Project>
