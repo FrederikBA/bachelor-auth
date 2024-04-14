@@ -6,4 +6,17 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Entities\" />
+      <Folder Include="Exceptions\" />
+      <Folder Include="Models\Dtos\" />
+      <Folder Include="Services\" />
+      <Folder Include="Specifications\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Ardalis.Specification" Version="7.0.0" />
+      <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="7.0.0" />
+    </ItemGroup>
+
 </Project>
