@@ -60,7 +60,7 @@ public class AuthService : IAuthService
 
     private string CreateToken(User user)
     {
-        // Create claims
+        //Create claims
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -68,17 +68,11 @@ public class AuthService : IAuthService
             new(ClaimTypes.Role, user.Role.RoleType.ToString())
         };
 
-        // Generate a secure key
-        var keyBytes = new byte[64]; // 512 bits
-        using (var rng = RandomNumberGenerator.Create())
-        {
-            rng.GetBytes(keyBytes);
-        }
+        //JWT secret key
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("3hfJ14K+20sXCy+GYCZjv12bM8Bw2m8F5VtOM3tN+F6KuVI51ohrtJEN+vQ0sFm2"));
 
-        var key = new SymmetricSecurityKey(keyBytes);
-
-        // Create token
-        var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
+        //Create token
+        var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
         var token = new JwtSecurityToken(
             claims: claims,
             expires: DateTime.UtcNow.AddDays(1),
