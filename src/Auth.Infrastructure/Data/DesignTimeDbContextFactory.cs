@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Shared.Integration.Configuration;
 
 namespace Auth.Infrastructure.Data;
 
@@ -7,9 +8,7 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AuthContex
 {
     public AuthContext CreateDbContext(string[] args)
     {
-        //TODO: Move connection string to appsettings.json / configuration file
-        const string connectionString = "Server=mssql;Database=ShwUsers;User Id=sa;Password=thisIsSuperStrong1234;TrustServerCertificate=True";
-        
+        const string connectionString = Constants.ConnectionStrings.ShwUsers; 
         var optionsBuilder = new DbContextOptionsBuilder<AuthContext>();
         optionsBuilder.UseSqlServer(connectionString);
 

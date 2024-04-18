@@ -29,7 +29,7 @@ builder.Services.AddCors(options =>
 //DBContext
 builder.Services.AddDbContext<AuthContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DbContext"));
+    options.UseSqlServer(Constants.ConnectionStrings.ShwUsers);
 });
 
 //API Controllers
@@ -50,7 +50,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IViewModelService, ViewModelService>();
 
 //JWT Key
-var key = Encoding.UTF8.GetBytes(Constants.JwtKey);
+var key = Encoding.UTF8.GetBytes(Constants.Authorization.JwtKey);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
