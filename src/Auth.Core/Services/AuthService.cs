@@ -9,6 +9,7 @@ using Auth.Core.Interfaces.Repositories;
 using Auth.Core.Models.Dtos;
 using Auth.Core.Specifications;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Integration.Configuration;
 
 namespace Auth.Core.Services;
 
@@ -69,7 +70,7 @@ public class AuthService : IAuthService
         };
 
         //JWT secret key
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("3hfJ14K+20sXCy+GYCZjv12bM8Bw2m8F5VtOM3tN+F6KuVI51ohrtJEN+vQ0sFm2"));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Constants.JwtKey));
 
         //Create token
         var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
