@@ -1,6 +1,6 @@
 using Ardalis.Specification.EntityFrameworkCore;
-using Auth.Core.Interfaces;
 using Auth.Core.Interfaces.Repositories;
+using Shared.Integration.Interfaces;
 
 namespace Auth.Infrastructure.Data;
 

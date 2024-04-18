@@ -1,4 +1,5 @@
-using Auth.Core.Interfaces;
+using Shared.Integration.Interfaces;
+using Shared.Integration.Models;
 
 namespace Auth.Core.Entities;
 

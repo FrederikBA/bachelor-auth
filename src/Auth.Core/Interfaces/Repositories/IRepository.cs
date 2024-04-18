@@ -1,4 +1,5 @@
 using Ardalis.Specification;
+using Shared.Integration.Interfaces;
 
 namespace Auth.Core.Interfaces.Repositories;
 
