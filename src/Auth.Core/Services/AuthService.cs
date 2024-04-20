@@ -70,7 +70,7 @@ public class AuthService : IAuthService
         };
 
         //JWT secret key
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Constants.Authorization.JwtKey));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config.Authorization.JwtKey));
 
         //Create token
         var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);

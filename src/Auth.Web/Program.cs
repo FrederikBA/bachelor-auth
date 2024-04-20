@@ -29,7 +29,7 @@ builder.Services.AddCors(options =>
 //DBContext
 builder.Services.AddDbContext<AuthContext>(options =>
 {
-    options.UseSqlServer(Constants.ConnectionStrings.ShwUsers);
+    options.UseSqlServer(Config.ConnectionStrings.ShwUsers);
 });
 
 //API Controllers
@@ -50,7 +50,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IViewModelService, ViewModelService>();
 
 //JWT Key
-var key = Encoding.UTF8.GetBytes(Constants.Authorization.JwtKey);
+var key = Encoding.UTF8.GetBytes(Config.Authorization.JwtKey);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -66,9 +66,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("RequireShippingCompanyAdminRole", policy => policy.RequireRole("ShippingCompanyAdmin"));
-    options.AddPolicy("RequireKemiDbUserRole", policy => policy.RequireRole("KemiDbUser"));
-    options.AddPolicy("RequireSuperAdminRole", policy => policy.RequireRole("SuperAdmin"));
+    options.AddPolicy(Config.Policies.RequireShippingCompanyAdminRole, policy => policy.RequireRole(Config.Roles.ShippingCompanyAdmin));
+    options.AddPolicy(Config.Policies.RequireKemiDbUserRole, policy => policy.RequireRole(Config.Roles.KemiDbUser));
+    options.AddPolicy(Config.Policies.RequireSuperAdminRole, policy => policy.RequireRole(Config.Roles.SuperAdmin));
 });
 
 var app = builder.Build();

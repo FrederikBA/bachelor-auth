@@ -8,7 +8,7 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AuthContex
 {
     public AuthContext CreateDbContext(string[] args)
     {
-        const string connectionString = Constants.ConnectionStrings.ShwUsers; 
+        const string connectionString = Config.ConnectionStrings.ShwUsers; 
         var optionsBuilder = new DbContextOptionsBuilder<AuthContext>();
         optionsBuilder.UseSqlServer(connectionString);
 
