@@ -1,8 +1,10 @@
 using System.Text;
 using Auth.Core.Interfaces.DomainServices;
+using Auth.Core.Interfaces.Integration;
 using Auth.Core.Interfaces.Repositories;
 using Auth.Core.Services;
 using Auth.Infrastructure.Data;
+using Auth.Infrastructure.Producers;
 using Auth.Web.Interfaces;
 using Auth.Web.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -42,6 +44,9 @@ builder.Services.AddSwaggerGen();
 //Build repositories
 builder.Services.AddScoped(typeof(IReadRepository<>), typeof(EfReadRepository<>));
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+
+//Build kafka producer
+builder.Services.AddScoped<ISyncProducer, KafkaProducer>();
 
 //Build services
 builder.Services.AddScoped<IAuthService, AuthService>();

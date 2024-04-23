@@ -1,10 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using Auth.Core.Entities;
 using Auth.Core.Exceptions;
 using Auth.Core.Interfaces.DomainServices;
+using Auth.Core.Interfaces.Integration;
 using Auth.Core.Interfaces.Repositories;
 using Auth.Core.Models.Dtos;
 using Auth.Core.Specifications;
@@ -16,10 +16,12 @@ namespace Auth.Core.Services;
 public class AuthService : IAuthService
 {
     private readonly IRepository<User> _userRepository;
+    private readonly ISyncProducer _syncProducer;
 
-    public AuthService(IRepository<User> userRepository)
+    public AuthService(IRepository<User> userRepository, ISyncProducer syncProducer)
     {
         _userRepository = userRepository;
+        _syncProducer = syncProducer;
     }
 
     public async Task<string> LoginAsync(LoginDto dto)
@@ -54,6 +56,9 @@ public class AuthService : IAuthService
         //Add user to database
         await _userRepository.AddAsync(user);
         await _userRepository.SaveChangesAsync();
+        
+        //Sync user with SEA database
+        await _syncProducer.ProduceAsync("sync-add-user", user);
         
         //Return userDto
         return user;
