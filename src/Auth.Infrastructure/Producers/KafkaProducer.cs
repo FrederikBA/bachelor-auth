@@ -1,17 +1,17 @@
 using System.Text.Json;
 using Auth.Core.Interfaces.Integration;
 using Confluent.Kafka;
+using Config = Shared.Integration.Configuration.Config;
 
 namespace Auth.Infrastructure.Producers;
 
 public class KafkaProducer : ISyncProducer   
 {
     private readonly IProducer<string, string> _producer;
-    private const string BootstrapServers = "kafka:9093";
 
     public KafkaProducer()
     {
-        var config = new ProducerConfig { BootstrapServers = BootstrapServers };
+        var config = new ProducerConfig { BootstrapServers = Config.Kafka.BootstrapServers };
         _producer = new ProducerBuilder<string, string>(config).Build();
     }
     

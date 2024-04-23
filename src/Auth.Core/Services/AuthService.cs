@@ -58,7 +58,7 @@ public class AuthService : IAuthService
         await _userRepository.SaveChangesAsync();
         
         //Sync user with SEA database
-        await _syncProducer.ProduceAsync("sync-add-user", user);
+        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddUser, user);
         
         //Return userDto
         return user;
