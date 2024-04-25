@@ -9,7 +9,6 @@ using Auth.Web.Interfaces;
 using Auth.Web.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Integration.Configuration;
 using Serilog;
@@ -78,12 +77,6 @@ builder.Services.AddAuthorization(options =>
         policy => policy.RequireRole(Config.Authorization.Roles.SuperAdmin));
 });
 
-// Remove default logging providers
-builder.Services.AddLogging(loggingBuilder =>
-{
-    loggingBuilder.ClearProviders();
-});
-
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -94,6 +87,10 @@ builder.Services.AddLogging(loggingBuilder =>
 {
     loggingBuilder.AddSerilog(dispose: true); // Add Serilog as the logging provider
 });
+
+builder.Host.UseSerilog((ctx, lc) => lc
+    .WriteTo.Console()
+    .ReadFrom.Configuration(ctx.Configuration));
 
 
 //Startup logging
