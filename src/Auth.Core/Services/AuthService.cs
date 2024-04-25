@@ -10,6 +10,7 @@ using Auth.Core.Models.Dtos;
 using Auth.Core.Specifications;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Integration.Configuration;
+using Shared.Integration.Models.Dtos.Sync;
 
 namespace Auth.Core.Services;
 
@@ -58,7 +59,7 @@ public class AuthService : IAuthService
         await _userRepository.SaveChangesAsync();
         
         //Sync user with SEA database
-        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddUser, user);
+        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddUser, new SyncUserDto{UserId = user.Id, Username = user.Email});
         
         //Return userDto
         return user;
