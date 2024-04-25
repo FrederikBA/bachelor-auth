@@ -78,12 +78,9 @@ builder.Services.AddAuthorization(options =>
         policy => policy.RequireRole(Config.Authorization.Roles.SuperAdmin));
 });
 
-// Configure Serilog
-// Log.Logger = new LoggerConfiguration()
-//     .MinimumLevel.Information()
-//     .WriteTo.Console()
-//     .CreateLogger();
+//Logging
 
+//Serilog
 builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.Console()
     .Filter.ByExcluding(logEvent =>
@@ -96,6 +93,12 @@ builder.Host.UseSerilog((ctx, lc) => lc
         logEvent.Level == LogEventLevel.Warning &&
         logEvent.MessageTemplate.Text.Contains("Storing"))
     .ReadFrom.Configuration(ctx.Configuration));
+
+//Configure startup logging
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .CreateLogger();
 
 //Startup logging
 try
