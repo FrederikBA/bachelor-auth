@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Shared.Integration.Configuration;
 using Serilog;
 using Serilog.Events;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -120,9 +121,17 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors(policyName);
 app.UseAuthentication();
+
+app.UseMetricServer();
+app.UseHttpMetrics();
+app.UseRouting();
+app.UseAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 app.UseHttpsRedirection();
 app.MapControllers();
-app.UseAuthorization();
 app.MapFallbackToFile("index.html");
 
 app.Run();
