@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Integration.Configuration;
 using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,15 +84,16 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
+// builder.Services.AddLogging(loggingBuilder =>
+// {
+//     loggingBuilder.AddSerilog(dispose: true);
+// });
+
+// Remove default logging providers
 builder.Services.AddLogging(loggingBuilder =>
 {
-    loggingBuilder.AddSerilog(dispose: true); // Add Serilog as the logging provider
+    loggingBuilder.ClearProviders(); // Clear the default logging providers
 });
-
-builder.Host.UseSerilog((ctx, lc) => lc
-    .WriteTo.Console()
-    .ReadFrom.Configuration(ctx.Configuration));
-
 
 //Startup logging
 try
@@ -106,6 +108,19 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+builder.Host.UseSerilog((ctx, lc) => lc
+    .WriteTo.Console()
+    .Filter.ByExcluding(logEvent =>
+        logEvent.Level == LogEventLevel.Warning &&
+        logEvent.MessageTemplate.Text.Contains("XML"))
+    .Filter.ByExcluding(logEvent =>
+        logEvent.Level == LogEventLevel.Warning &&
+        logEvent.MessageTemplate.Text.Contains("https"))
+    .Filter.ByExcluding(logEvent =>
+        logEvent.Level == LogEventLevel.Warning &&
+        logEvent.MessageTemplate.Text.Contains("storing keys"))
+    .ReadFrom.Configuration(ctx.Configuration));
 
 var app = builder.Build();
 
