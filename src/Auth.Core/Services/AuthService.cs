@@ -8,6 +8,7 @@ using Auth.Core.Interfaces.Integration;
 using Auth.Core.Interfaces.Repositories;
 using Auth.Core.Models.Dtos;
 using Auth.Core.Specifications;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Integration.Configuration;
 using Shared.Integration.Models.Dtos.Sync;
@@ -18,11 +19,13 @@ public class AuthService : IAuthService
 {
     private readonly IRepository<User> _userRepository;
     private readonly ISyncProducer _syncProducer;
+    private readonly ILogger<AuthService> _logger;
 
-    public AuthService(IRepository<User> userRepository, ISyncProducer syncProducer)
+    public AuthService(IRepository<User> userRepository, ISyncProducer syncProducer, ILogger<AuthService> logger)
     {
         _userRepository = userRepository;
         _syncProducer = syncProducer;
+        _logger = logger;
     }
 
     public async Task<string> LoginAsync(LoginDto dto)
@@ -35,6 +38,8 @@ public class AuthService : IAuthService
 
         var token = CreateToken(user);
 
+        _logger.LogInformation($"User: {user.Email} logged in");
+
         return token;
     }
 
@@ -44,7 +49,10 @@ public class AuthService : IAuthService
         var users = await _userRepository.ListAsync();
 
         if (users.Any(x => x.Email == dto.Email))
+        {
+            _logger.LogWarning($"User: {dto.Email} tried to register with an existing email");
             throw new RegisterException("Email already exists");
+        }
 
         //Map dto to user and hash password
         var user = new User
@@ -57,10 +65,13 @@ public class AuthService : IAuthService
         //Add user to database
         await _userRepository.AddAsync(user);
         await _userRepository.SaveChangesAsync();
-        
+
+        _logger.LogInformation($"User: {user.Email} registered");
+
         //Sync user with SEA database
-        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddUser, new SyncUserDto{UserId = user.Id, Username = user.Email});
-        
+        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddUser,
+            new SyncUserDto { UserId = user.Id, Username = user.Email });
+
         //Return userDto
         return user;
     }

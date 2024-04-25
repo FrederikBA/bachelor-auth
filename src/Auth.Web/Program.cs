@@ -9,8 +9,10 @@ using Auth.Web.Interfaces;
 using Auth.Web.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Integration.Configuration;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,10 +31,7 @@ builder.Services.AddCors(options =>
 });
 
 //DBContext
-builder.Services.AddDbContext<AuthContext>(options =>
-{
-    options.UseSqlServer(Config.ConnectionStrings.ShwUsers);
-});
+builder.Services.AddDbContext<AuthContext>(options => { options.UseSqlServer(Config.ConnectionStrings.ShwUsers); });
 
 //API Controllers
 builder.Services.AddControllers();
@@ -71,10 +70,38 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(Config.Authorization.Policies.RequireShippingCompanyAdminRole, policy => policy.RequireRole(Config.Authorization.Roles.ShippingCompanyAdmin));
-    options.AddPolicy(Config.Authorization.Policies.RequireKemiDbUserRole, policy => policy.RequireRole(Config.Authorization.Roles.KemiDbUser));
-    options.AddPolicy(Config.Authorization.Policies.RequireSuperAdminRole, policy => policy.RequireRole(Config.Authorization.Roles.SuperAdmin));
+    options.AddPolicy(Config.Authorization.Policies.RequireShippingCompanyAdminRole,
+        policy => policy.RequireRole(Config.Authorization.Roles.ShippingCompanyAdmin));
+    options.AddPolicy(Config.Authorization.Policies.RequireKemiDbUserRole,
+        policy => policy.RequireRole(Config.Authorization.Roles.KemiDbUser));
+    options.AddPolicy(Config.Authorization.Policies.RequireSuperAdminRole,
+        policy => policy.RequireRole(Config.Authorization.Roles.SuperAdmin));
 });
+
+//Configure logging
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddSerilog(dispose: true);
+});
+
+//Startup logging
+try
+{
+    Log.Information("AuthService starting up");
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "AuthService failed to start up");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
 
 var app = builder.Build();
 
