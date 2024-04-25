@@ -50,7 +50,6 @@ public class AuthService : IAuthService
 
         if (users.Any(x => x.Email == dto.Email))
         {
-            _logger.LogWarning($"User: {dto.Email} tried to register with an existing email");
             throw new RegisterException("Email already exists");
         }
 
