@@ -79,21 +79,23 @@ builder.Services.AddAuthorization(options =>
 });
 
 // Configure Serilog
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
+// Log.Logger = new LoggerConfiguration()
+//     .MinimumLevel.Information()
+//     .WriteTo.Console()
+//     .CreateLogger();
+
+builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.Console()
-    .CreateLogger();
-
-// builder.Services.AddLogging(loggingBuilder =>
-// {
-//     loggingBuilder.AddSerilog(dispose: true);
-// });
-
-// Remove default logging providers
-builder.Services.AddLogging(loggingBuilder =>
-{
-    loggingBuilder.ClearProviders(); // Clear the default logging providers
-});
+    .Filter.ByExcluding(logEvent =>
+        logEvent.Level == LogEventLevel.Warning &&
+        logEvent.MessageTemplate.Text.Contains("XML"))
+    .Filter.ByExcluding(logEvent =>
+        logEvent.Level == LogEventLevel.Warning &&
+        logEvent.MessageTemplate.Text.Contains("https"))
+    .Filter.ByExcluding(logEvent =>
+        logEvent.Level == LogEventLevel.Warning &&
+        logEvent.MessageTemplate.Text.Contains("Storing"))
+    .ReadFrom.Configuration(ctx.Configuration));
 
 //Startup logging
 try
@@ -108,19 +110,6 @@ finally
 {
     Log.CloseAndFlush();
 }
-
-builder.Host.UseSerilog((ctx, lc) => lc
-    .WriteTo.Console()
-    .Filter.ByExcluding(logEvent =>
-        logEvent.Level == LogEventLevel.Warning &&
-        logEvent.MessageTemplate.Text.Contains("XML"))
-    .Filter.ByExcluding(logEvent =>
-        logEvent.Level == LogEventLevel.Warning &&
-        logEvent.MessageTemplate.Text.Contains("https"))
-    .Filter.ByExcluding(logEvent =>
-        logEvent.Level == LogEventLevel.Warning &&
-        logEvent.MessageTemplate.Text.Contains("storing keys"))
-    .ReadFrom.Configuration(ctx.Configuration));
 
 var app = builder.Build();
 
