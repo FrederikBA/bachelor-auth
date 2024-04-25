@@ -7,6 +7,7 @@ using Auth.Core.Models.Dtos;
 using Auth.Core.Services;
 using Auth.Core.Specifications;
 using Auth.Test.Helpers;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Auth.Test.Tests.UnitTests;
@@ -16,13 +17,15 @@ public class AuthUnitTests
     private readonly IAuthService _authService;
     private readonly Mock<IRepository<User>> _userRepositoryMock = new();
     private readonly Mock<ISyncProducer> _mockKafkaProducer = new();
+    private readonly Mock<ILogger<AuthService>> _loggerMock = new();
 
     public AuthUnitTests()
     {
         _authService = new AuthService
         (
             _userRepositoryMock.Object,
-            _mockKafkaProducer.Object
+            _mockKafkaProducer.Object,
+            _loggerMock.Object
         );
     }
 
