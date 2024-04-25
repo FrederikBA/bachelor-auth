@@ -103,11 +103,11 @@ Log.Logger = new LoggerConfiguration()
 //Startup logging
 try
 {
-    Log.Information("AuthService starting up");
+    Log.Information("Auth Service starting up");
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "AuthService failed to start up");
+    Log.Fatal(ex, "Auth Service failed to start up");
 }
 finally
 {
