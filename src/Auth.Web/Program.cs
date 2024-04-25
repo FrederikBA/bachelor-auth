@@ -80,6 +80,7 @@ builder.Services.AddAuthorization(options =>
 
 //Configure logging
 Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
     .WriteTo.Console()
     .CreateLogger();
 
@@ -88,6 +89,7 @@ builder.Services.AddLogging(loggingBuilder =>
     loggingBuilder.ClearProviders();
     loggingBuilder.AddSerilog(dispose: true);
 });
+
 
 //Startup logging
 try
