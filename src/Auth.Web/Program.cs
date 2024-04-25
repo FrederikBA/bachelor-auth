@@ -78,7 +78,13 @@ builder.Services.AddAuthorization(options =>
         policy => policy.RequireRole(Config.Authorization.Roles.SuperAdmin));
 });
 
-//Configure logging
+// Remove default logging providers
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.ClearProviders();
+});
+
+// Configure Serilog
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
@@ -86,8 +92,7 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Services.AddLogging(loggingBuilder =>
 {
-    loggingBuilder.ClearProviders();
-    loggingBuilder.AddSerilog(dispose: true);
+    loggingBuilder.AddSerilog(dispose: true); // Add Serilog as the logging provider
 });
 
 
